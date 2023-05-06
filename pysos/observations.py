@@ -1,6 +1,6 @@
 import requests
 import json
-from pysos.querybuilder import Query
+from pysos.querybuilder import Query, AreaType
 
 OBSERVATION_LIMIT = 10000
 OBSERVATION_TAKE = 1000
@@ -10,7 +10,27 @@ class ObservationManager:
     def __init__(self, base_url: str, api_key: str) -> None:
         self.base_url = base_url
         self.session = requests.session()
-        self.session.headers = {"Ocp-Apim-Subscription-Key": api_key}
+        self.session.headers = {
+            "X-Api-Version": "1.5",
+            "Ocp-Apim-Subscription-Key": api_key,
+        }
+
+    def get_area_id(self, area_type: AreaType, area_name: str) -> str:
+        params: dict[str, int | str] = {
+            "areaTypes": area_type,
+            "searchString": area_name,
+            "skip": 0,
+            "take": 1,
+        }
+        response = self.session.get(
+            self.base_url + "/Areas",
+            params=params,
+        )
+        response.raise_for_status()
+        response_records: list[dict] = response.json()["records"]
+        for area_record in response_records:
+            return area_record["featureId"]
+        raise RuntimeError("Area not found")
 
     def get_count(self, query: Query) -> int:
         response = self.session.post(

@@ -1,6 +1,7 @@
 from enum import Enum
 from datetime import date
 from collections import defaultdict
+from typing import Literal
 
 
 class Provider(Enum):
@@ -8,6 +9,9 @@ class Provider(Enum):
     ClamGateway = 2
     KUL = 3
     MVM = 4
+
+
+AreaType = Literal["Province", "Municipality"]
 
 
 class DateFilterType(Enum):
@@ -43,8 +47,10 @@ class Query(defaultdict):
         elif start_date is not None and end_date is not None:
             self.add_date_filter(start_date, end_date)
 
-    def add_area(self, type: str, feature_id: str) -> None:
-        self["geographics"]["areas"].append({"areaType": type, "featureId": feature_id})
+    def add_area(self, area_type: AreaType, feature_id: str) -> None:
+        self["geographics"]["areas"].append(
+            {"areaType": area_type, "featureId": feature_id}
+        )
 
     def add_taxons(self, taxon_ids: list[int]) -> None:
         self["taxon"]["ids"].extend(taxon_ids)

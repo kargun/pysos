@@ -16,8 +16,10 @@ base_url = "https://api.artdatabanken.se/species-observation-system/v1"
 
 om = ObservationManager(base_url, api_key)
 
+province_id = om.get_area_id("Province", "Småland")
+
 q = Query(
-    provinces=["1"],
+    provinces=[province_id],
     taxons=[102942],
     start_date=date.today() - timedelta(days=1),
     end_date=date.today(),
