@@ -59,6 +59,7 @@ class ObservationManager:
                             "location.locality",
                             "taxon.vernacularName",
                             "occurrence.occurrenceId",
+                            "occurrence.reportedBy",
                             "occurrence.individualCount",
                             "occurrence.sex",
                             "occurrence.lifeStage",
