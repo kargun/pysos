@@ -1,6 +1,6 @@
-from enum import Enum
-from datetime import date
 from collections import defaultdict
+from datetime import date
+from enum import Enum
 from typing import Literal
 
 
@@ -40,12 +40,12 @@ class Query(defaultdict):
         if len(taxons) > 0:
             self.add_taxons(taxons)
 
-        if bool(start_date) ^ bool(end_date):
+        if start_date is not None and end_date is not None:
+            self.add_date_filter(start_date, end_date)
+        else:
             raise ValueError(
                 "Both start and end date must be provided for a date filter"
             )
-        elif start_date is not None and end_date is not None:
-            self.add_date_filter(start_date, end_date)
 
     def add_area(self, area_type: AreaType, feature_id: str) -> None:
         self["geographics"]["areas"].append(
