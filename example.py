@@ -1,12 +1,9 @@
-from dotenv import load_dotenv
 import os
 import json
 from datetime import date, timedelta
 from pysos.querybuilder import Query
 from pysos.observations import ObservationManager
 from pysos.species import SpeciesManager
-
-load_dotenv()
 
 api_key = os.environ.get("API_KEY")
 
