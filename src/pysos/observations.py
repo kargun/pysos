@@ -1,9 +1,13 @@
-import requests
 import json
-from pysos.querybuilder import Query, AreaType
+from pathlib import Path
+
+import requests
+
+from pysos.querybuilder import AreaType, Query
 
 OBSERVATION_LIMIT = 10000
 OBSERVATION_TAKE = 1000
+DOWNLOAD_LIMIT = 25000
 
 
 class ObservationManager:
@@ -88,3 +92,25 @@ class ObservationManager:
                 skip += OBSERVATION_TAKE
 
             return records
+
+    def download_csv(
+        self,
+        query: Query,
+        file_path: Path | str,
+        zip: bool = True,
+    ) -> None:
+        count = self.get_count(query)
+        if count == 0:
+            raise RuntimeError("No records returned")
+        elif count > DOWNLOAD_LIMIT:
+            raise RuntimeError("Too many records for export")
+
+        response = self.session.post(
+            self.base_url + "/Exports/Download/Csv",
+            params={"gzip": zip},
+            data=json.dumps(query),
+            headers={"Content-Type": "application/json"},
+        )
+
+        with open(file_path, "wb") as f:
+            f.write(response.content)
